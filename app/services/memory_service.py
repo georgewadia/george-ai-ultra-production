@@ -1,10 +1,30 @@
-memory_store = {}
+from app.database.database import SessionLocal
+from app.database.models import Customer, Message
 
-def save_memory(user_id, text):
-    if user_id not in memory_store:
-        memory_store[user_id] = []
 
-    memory_store[user_id].append(text)
+def save_memory(user_id: str, text: str):
 
-def get_memory(user_id):
-    return memory_store.get(user_id, [])
+    db = SessionLocal()
+
+    customer = db.query(Customer).filter(
+        Customer.facebook_id == user_id
+    ).first()
+
+    if not customer:
+        customer = Customer(
+            facebook_id=user_id
+        )
+
+        db.add(customer)
+
+    new_message = Message(
+        facebook_id=user_id,
+        role="user",
+        content=text
+    )
+
+    db.add(new_message)
+
+    db.commit()
+
+    db.close()
