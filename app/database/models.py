@@ -20,6 +20,8 @@ class Customer(Base):
     budget = Column(String, nullable=True)
 
     lead_status = Column(String, default="NEW")
+    
+    lead_score = Column(Integer, default=0)
 
     created_at = Column(DateTime, default=datetime.utcnow)
 
