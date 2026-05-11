@@ -23,7 +23,7 @@ class Customer(Base):
 
     lead_score = Column(Integer, default=0)
 
-    last_followup = Column(DateTime, nullable=True)
+    #last_followup = Column(DateTime, nullable=True)
 
     created_at = Column(DateTime, default=datetime.utcnow)
 
