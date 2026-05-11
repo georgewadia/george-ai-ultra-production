@@ -36,22 +36,22 @@ export default function Login() {
 
       setError("");
 
-      const form = new FormData();
+      const params = new URLSearchParams();
 
-      form.append(
-        "username",
-        formData.username
-      );
+params.append("username", formData.username);
 
-      form.append(
-        "password",
-        formData.password
-      );
+params.append("password", formData.password);
 
-      const res = await API.post(
-        "/auth/login",
-        form
-      );
+const res = await API.post(
+  "/auth/login",
+  params,
+  {
+    headers: {
+      "Content-Type":
+        "application/x-www-form-urlencoded",
+    },
+  }
+);
 
       login(res.data.access_token);
 
