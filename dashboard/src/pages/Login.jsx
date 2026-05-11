@@ -49,7 +49,7 @@ export default function Login() {
       );
 
       const res = await API.post(
-        "/login",
+        "/auth/login",
         form
       );
 
