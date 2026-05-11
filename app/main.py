@@ -11,6 +11,8 @@ from app.api.dashboard import router as dashboard_router
 
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.auth import router as auth_router
+
 
 Base.metadata.create_all(bind=engine)
 
@@ -39,3 +41,5 @@ async def health():
 app.include_router(webhook_router)
 
 app.include_router(dashboard_router)
+
+app.include_router(auth_router)
