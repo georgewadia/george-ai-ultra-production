@@ -7,6 +7,8 @@ from app.database.models import Base
 
 from app.scheduler.scheduler import start_scheduler
 
+from app.api.dashboard import router as dashboard_router
+
 
 Base.metadata.create_all(bind=engine)
 
@@ -23,3 +25,7 @@ async def startup():
 @app.get("/")
 async def health():
     return {"status": "ultra-production-running"}
+
+app.include_router(webhook_router)
+
+app.include_router(dashboard_router)
