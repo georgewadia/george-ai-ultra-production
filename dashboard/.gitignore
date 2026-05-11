@@ -8,15 +8,22 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-dist
+
+# مهم:
+# لا نحذف dist لأننا سنرفع نسخة الإنتاج إلى Railway
+
 dist-ssr
+
 *.local
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+
 .idea
+
 .DS_Store
+
 *.suo
 *.ntvs*
 *.njsproj
