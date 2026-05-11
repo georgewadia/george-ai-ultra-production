@@ -4,27 +4,22 @@ import { useNavigate } from "react-router-dom";
 
 import API from "../services/api";
 
-import { AuthContext }
-from "../context/AuthContext";
+import { AuthContext } from "../context/AuthContext";
 
 export default function Login() {
 
   const navigate = useNavigate();
 
-  const { login } =
-    useContext(AuthContext);
+  const { login } = useContext(AuthContext);
 
-  const [formData, setFormData] =
-    useState({
-      username: "",
-      password: "",
-    });
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+  });
 
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const [error, setError] =
-    useState("");
+  const [error, setError] = useState("");
 
   const handleLogin = async (e) => {
 
@@ -38,20 +33,26 @@ export default function Login() {
 
       const params = new URLSearchParams();
 
-params.append("username", formData.username);
+      params.append(
+        "username",
+        formData.username
+      );
 
-params.append("password", formData.password);
+      params.append(
+        "password",
+        formData.password
+      );
 
-const res = await API.post(
-  "/auth/login",
-  params,
-  {
-    headers: {
-      "Content-Type":
-        "application/x-www-form-urlencoded",
-    },
-  }
-);
+      const res = await API.post(
+        "/auth/login",
+        params,
+        {
+          headers: {
+            "Content-Type":
+              "application/x-www-form-urlencoded",
+          },
+        }
+      );
 
       login(res.data.access_token);
 
@@ -62,6 +63,8 @@ const res = await API.post(
       setError(
         "Invalid username or password"
       );
+
+      console.log(err);
 
     } finally {
 
