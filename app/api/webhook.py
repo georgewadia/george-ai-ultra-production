@@ -55,7 +55,8 @@ async def webhook(request: Request):
 
                             # إنشاء رد AI
                             ai_response = route_message(
-                                message_text
+                             sender_id,
+                            message_text
                             )
 
                             # إرسال الرد
