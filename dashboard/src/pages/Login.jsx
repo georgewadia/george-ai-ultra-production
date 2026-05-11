@@ -31,26 +31,11 @@ export default function Login() {
 
       setError("");
 
-      const params = new URLSearchParams();
-
-      params.append(
-        "username",
-        formData.username
-      );
-
-      params.append(
-        "password",
-        formData.password
-      );
-
       const res = await API.post(
         "/auth/login",
-        params,
         {
-          headers: {
-            "Content-Type":
-              "application/x-www-form-urlencoded",
-          },
+          username: formData.username,
+          password: formData.password,
         }
       );
 
@@ -60,11 +45,11 @@ export default function Login() {
 
     } catch (err) {
 
+      console.log(err);
+
       setError(
         "Invalid username or password"
       );
-
-      console.log(err);
 
     } finally {
 
