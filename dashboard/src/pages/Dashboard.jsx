@@ -10,6 +10,11 @@ import {
   ResponsiveContainer
 } from "recharts";
 
+import { useContext } from "react";
+
+import { AuthContext }
+from "../context/AuthContext";
+
 function Dashboard() {
 
   const [stats, setStats] = useState(null);
@@ -17,6 +22,9 @@ function Dashboard() {
   const [customers, setCustomers] = useState([]);
 
   const [search, setSearch] = useState("");
+
+  const { logout } =
+  useContext(AuthContext);
 
   const [filter, setFilter] = useState("ALL");
 
@@ -74,9 +82,20 @@ function Dashboard() {
 
     <div className="min-h-screen bg-gray-100 p-8">
 
-      <h1 className="text-4xl font-bold mb-8">
-        George AI Dashboard 🚀
-      </h1>
+      <div className="flex justify-between items-center mb-8">
+
+  <h1 className="text-4xl font-bold">
+    George AI Dashboard 🚀
+  </h1>
+
+  <button
+    onClick={logout}
+    className="bg-red-500 text-white px-4 py-2 rounded-xl"
+  >
+    Logout
+  </button>
+
+</div>
 
       {stats && (
 

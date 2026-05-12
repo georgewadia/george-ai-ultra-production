@@ -25,10 +25,12 @@ export default function AuthProvider({ children }) {
 
   const logout = () => {
 
-    localStorage.removeItem("token");
+  localStorage.removeItem("token");
 
-    setToken(null);
-  };
+  setToken(null);
+
+  window.location.href = "/login";
+};
 
   return (
     <AuthContext.Provider
