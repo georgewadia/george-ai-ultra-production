@@ -13,6 +13,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.auth import router as auth_router
 
+from fastapi.responses import HTMLResponse
+
 
 Base.metadata.create_all(bind=engine)
 
@@ -43,3 +45,18 @@ app.include_router(webhook_router)
 app.include_router(dashboard_router)
 
 app.include_router(auth_router)
+
+
+@app.get("/delete-data", response_class=HTMLResponse)
+async def delete_data():
+
+    return """
+    <h1>Delete User Data</h1>
+
+    <p>
+    If you want to delete your data from
+    George AI System,
+    please send a request to:
+    georgeai@gmail.com
+    </p>
+    """
