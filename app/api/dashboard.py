@@ -1,13 +1,18 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
 from app.database.database import SessionLocal
+
 from app.database.models import Customer, Message
+
+from app.api.auth import verify_token
 
 router = APIRouter()
 
 
 @router.get("/dashboard/stats")
-async def dashboard_stats():
+async def dashboard_stats(
+    user=Depends(verify_token)
+):
 
     db = SessionLocal()
 
@@ -29,7 +34,9 @@ async def dashboard_stats():
 
 
 @router.get("/dashboard/customers")
-async def get_customers():
+async def get_customers(
+    user=Depends(verify_token)
+):
 
     db = SessionLocal()
 
