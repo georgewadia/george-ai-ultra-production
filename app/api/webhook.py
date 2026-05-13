@@ -58,18 +58,20 @@ async def webhook(request: Request):
 
             for entry in data.get("entry", []):
 
-                # =========================
+                # =================================
                 # Messenger Messages
-                # =========================
+                # =================================
 
                 if "messaging" in entry:
 
                     for event in entry["messaging"]:
 
+                        # Ignore Echo Messages
                         if event.get(
                             "message",
                             {}
                         ).get("is_echo"):
+
                             continue
 
                         if "message" in event:
@@ -127,68 +129,72 @@ async def webhook(request: Request):
 
                             db.close()
 
-                # =========================
+                # =================================
                 # Facebook Comments
-                # =========================
+                # =================================
 
                 if "changes" in entry:
 
+                    print("CHANGES EVENT:")
+                    print(entry["changes"])
+
                     for change in entry["changes"]:
 
+                        print("SINGLE CHANGE:")
+                        print(change)
+
+                        value = change.get(
+                            "value",
+                            {}
+                        )
+
+                        print("CHANGE VALUE:")
+                        print(value)
+
                         if (
-                            change.get("field")
-                            == "feed"
+                            value.get("item")
+                            == "comment"
                         ):
 
-                            value = change.get(
-                                "value",
-                                {}
+                            comment_text = value.get(
+                                "message",
+                                ""
                             )
 
-                            if (
-                                value.get("item")
-                                == "comment"
-                            ):
+                            comment_id = value.get(
+                                "comment_id"
+                            )
 
-                                comment_text = value.get(
-                                    "message",
-                                    ""
+                            sender_name = (
+                                value.get(
+                                    "from",
+                                    {}
+                                ).get(
+                                    "name",
+                                    "User"
                                 )
+                            )
 
-                                comment_id = value.get(
-                                    "comment_id"
-                                )
+                            print(
+                                f"New Comment "
+                                f"From {sender_name}: "
+                                f"{comment_text}"
+                            )
 
-                                sender_name = (
-                                    value.get(
-                                        "from",
-                                        {}
-                                    ).get(
-                                        "name",
-                                        "User"
-                                    )
-                                )
+                            ai_reply = route_message(
+                                sender_name,
+                                comment_text
+                            )
 
-                                print(
-                                    f"New Comment "
-                                    f"From {sender_name}: "
-                                    f"{comment_text}"
-                                )
+                            print(
+                                f"AI Comment Reply: "
+                                f"{ai_reply}"
+                            )
 
-                                ai_reply = route_message(
-                                    sender_name,
-                                    comment_text
-                                )
-
-                                print(
-                                    f"AI Comment Reply: "
-                                    f"{ai_reply}"
-                                )
-
-                                reply_to_comment(
-                                    comment_id,
-                                    ai_reply
-                                )
+                            reply_to_comment(
+                                comment_id,
+                                ai_reply
+                            )
 
         return {
             "status": "ok"
