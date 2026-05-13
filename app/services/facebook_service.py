@@ -24,6 +24,28 @@ def send_message(recipient_id, text):
         json=payload
     )
 
-    print("FACEBOOK RESPONSE:")
+    print("FACEBOOK MESSAGE RESPONSE:")
+    print(response.status_code)
+    print(response.text)
+
+
+def reply_to_comment(comment_id, text):
+
+    url = (
+        f"https://graph.facebook.com/v21.0/"
+        f"{comment_id}/comments"
+        f"?access_token={settings.FACEBOOK_PAGE_ACCESS_TOKEN}"
+    )
+
+    payload = {
+        "message": text
+    }
+
+    response = requests.post(
+        url,
+        json=payload
+    )
+
+    print("FACEBOOK COMMENT RESPONSE:")
     print(response.status_code)
     print(response.text)
