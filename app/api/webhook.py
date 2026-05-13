@@ -12,8 +12,37 @@ from app.services.memory_service import save_memory
 from app.database.database import SessionLocal
 from app.database.models import Message
 
+from app.config.settings import settings
+
 router = APIRouter()
 
+
+# =====================================
+# Facebook Verification
+# =====================================
+
+@router.get("/")
+async def verify_webhook(
+    hub_mode: str = None,
+    hub_verify_token: str = None,
+    hub_challenge: str = None
+):
+
+    if (
+        hub_mode == "subscribe"
+        and hub_verify_token == settings.VERIFY_TOKEN
+    ):
+
+        return int(hub_challenge)
+
+    return {
+        "error": "Verification failed"
+    }
+
+
+# =====================================
+# Facebook Events
+# =====================================
 
 @router.post("/")
 async def webhook(request: Request):
