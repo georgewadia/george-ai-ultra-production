@@ -21,7 +21,7 @@ def process_followups():
             continue
 
         # أول Follow-up
-        if customer.last_followup is None:
+        if getattr(customer, "last_followup", None) is None:
 
             message = (
                 "يا فنان لو حابب ابعتلي مساحة المكان "
