@@ -2,186 +2,6 @@ from fastapi import APIRouter, Request
 
 from app.agents.manager_agent import route_message
 
-from app.agents.comment_agent import (
-    comment_agent
-)
-
-from app.services.facebook_service import (
-    send_message,
-    reply_to_comment
-)
-
-from app.services.memory_service import (
-    save_memory
-)
-
-from app.database.database import SessionLocal
-
-from app.database.models import Message
-
-router = APIRouter()
-
-
-@router.post("/")
-async def webhook(request: Request):
-
-    try:
-
-        data = await request.json()
-
-        if data.get("object") == "page":
-
-            for entry in data.get("entry", []):
-
-                # =========================
-                # معالجة التعليقات
-                # =========================
-
-                if "changes" in entry:
-
-                    for change in entry["changes"]:
-
-                        if (
-                            change.get("field")
-                            == "feed"
-                        ):
-
-                            value = change.get(
-                                "value",
-                                {}
-                            )
-
-                            if (
-                                value.get("item")
-                                == "comment"
-                            ):
-
-                                comment_id = value.get(
-                                    "comment_id"
-                                )
-
-                                comment_text = value.get(
-                                    "message",
-                                    ""
-                                )
-
-                                from_id = value.get(
-                                    "from",
-                                    {}
-                                ).get("id")
-
-                                # تجاهل تعليقات الصفحة نفسها
-                                if not from_id:
-                                    continue
-
-                                print(
-                                    f"New Comment: {comment_text}"
-                                )
-
-                                # إنشاء رد AI
-                                ai_reply = comment_agent(
-                                    comment_text
-                                )
-
-                                print(
-                                    f"AI Reply: {ai_reply}"
-                                )
-
-                                # الرد على التعليق
-                                result = reply_to_comment(
-                                    comment_id,
-                                    ai_reply
-                                )
-
-                                print(result)
-
-                # =========================
-                # معالجة الرسائل
-                # =========================
-
-                if "messaging" in entry:
-
-                    for event in entry["messaging"]:
-
-                        # تجاهل رسائل Echo
-                        if event.get(
-                            "message",
-                            {}
-                        ).get("is_echo"):
-
-                            continue
-
-                        if "message" in event:
-
-                            sender_id = event[
-                                "sender"
-                            ]["id"]
-
-                            message_text = event[
-                                "message"
-                            ].get(
-                                "text",
-                                ""
-                            ).strip()
-
-                            # تجاهل الرسائل الفارغة
-                            if not message_text:
-                                continue
-
-                            print(
-                                f"New Message From "
-                                f"{sender_id}: "
-                                f"{message_text}"
-                            )
-
-                            # حفظ رسالة العميل
-                            save_memory(
-                                sender_id,
-                                message_text
-                            )
-
-                            # إنشاء رد AI
-                            ai_response = route_message(
-                                sender_id,
-                                message_text
-                            )
-
-                            # إرسال الرد
-                            send_message(
-                                sender_id,
-                                ai_response
-                            )
-
-                            # حفظ رد AI
-                            db = SessionLocal()
-
-                            ai_message = Message(
-                                facebook_id=sender_id,
-                                role="assistant",
-                                content=ai_response
-                            )
-
-                            db.add(ai_message)
-
-                            db.commit()
-
-                            db.close()
-
-        return {
-            "status": "ok"
-        }
-
-    except Exception as e:
-
-        print(f"Webhook Error: {e}")
-
-        return {
-            "status": "error",
-            "message": str(e)
-        }from fastapi import APIRouter, Request
-
-from app.agents.manager_agent import route_message
-
 from app.services.facebook_service import (
     send_message,
     reply_to_comment
@@ -217,12 +37,17 @@ async def webhook(request: Request):
 
                     for event in entry["messaging"]:
 
-                        if event.get("message", {}).get("is_echo"):
+                        if event.get(
+                            "message",
+                            {}
+                        ).get("is_echo"):
                             continue
 
                         if "message" in event:
 
-                            sender_id = event["sender"]["id"]
+                            sender_id = (
+                                event["sender"]["id"]
+                            )
 
                             message_text = (
                                 event["message"]
@@ -235,7 +60,8 @@ async def webhook(request: Request):
 
                             print(
                                 f"New Message From "
-                                f"{sender_id}: {message_text}"
+                                f"{sender_id}: "
+                                f"{message_text}"
                             )
 
                             save_memory(
@@ -281,7 +107,8 @@ async def webhook(request: Request):
                     for change in entry["changes"]:
 
                         if (
-                            change.get("field") == "feed"
+                            change.get("field")
+                            == "feed"
                         ):
 
                             value = change.get(
@@ -340,7 +167,9 @@ async def webhook(request: Request):
 
     except Exception as e:
 
-        print(f"Webhook Error: {e}")
+        print(
+            f"Webhook Error: {e}"
+        )
 
         return {
             "status": "error",
