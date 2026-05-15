@@ -8,7 +8,6 @@ def clean_text(text: str):
     if not text:
         return ""
 
-    # إزالة Markdown
     text = (
         text
         .replace("**", "")
@@ -17,11 +16,14 @@ def clean_text(text: str):
         .replace("```", "")
     )
 
-    # تقليل طول الرسالة
     text = text[:900]
 
     return text
 
+
+# =====================================
+# Send Text Message
+# =====================================
 
 def send_message(recipient_id, text):
 
@@ -51,6 +53,47 @@ def send_message(recipient_id, text):
     print(response.status_code)
     print(response.text)
 
+
+# =====================================
+# Send Image Message
+# =====================================
+
+def send_image(recipient_id, image_url):
+
+    url = (
+        "https://graph.facebook.com/v21.0/me/messages"
+        f"?access_token="
+        f"{settings.FACEBOOK_PAGE_ACCESS_TOKEN}"
+    )
+
+    payload = {
+        "recipient": {
+            "id": recipient_id
+        },
+        "message": {
+            "attachment": {
+                "type": "image",
+                "payload": {
+                    "url": image_url,
+                    "is_reusable": True
+                }
+            }
+        }
+    }
+
+    response = requests.post(
+        url,
+        json=payload
+    )
+
+    print("FACEBOOK IMAGE RESPONSE:")
+    print(response.status_code)
+    print(response.text)
+
+
+# =====================================
+# Reply To Facebook Comment
+# =====================================
 
 def reply_to_comment(comment_id, text):
 
